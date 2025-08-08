@@ -1,0 +1,41 @@
+{
+  "name": "receipt_analyser",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "dayjs": "^1.11.13",
+    "expo": "~53.0.17",
+    "expo-camera": "~16.1.10",
+    "expo-constants": "~17.1.7",
+    "expo-dynamic-image-crop": "^1.4.44",
+    "expo-file-system": "~18.1.11",
+    "expo-image": "^2.3.2",
+    "expo-image-manipulator": "~13.1.7",
+    "expo-image-picker": "~16.1.4",
+    "expo-linking": "~7.1.7",
+    "expo-router": "~5.1.3",
+    "expo-sqlite": "~15.2.14",
+    "expo-status-bar": "~2.2.3",
+    "lodash": "^4.17.21",
+    "react": "19.0.0",
+    "react-native": "0.79.5",
+    "react-native-modal-datetime-picker": "^18.0.0",
+    "react-native-paper": "^5.14.5",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "~4.11.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@types/lodash": "^4.17.20",
+    "@types/react": "~19.0.10",
+    "typescript": "~5.8.3"
+  },
+  "private": true
+}
