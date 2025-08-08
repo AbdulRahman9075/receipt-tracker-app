@@ -39,13 +39,13 @@ yarn-error.*
 
 
 #pythons
-pythondir/__pycache__/
-pythondir/venv/
-pythondir/.env
-pythondir/apikey.txt
-pythondir/test.txt
-pythondir/images
-pythondir/output
+backend-server/__pycache__/
+backend-server/venv/
+backend-server/.env
+backend-server/apikey.txt
+backend-server/test.txt
+backend-server/images
+backend-server/output
 
 #vscode
 /.vscode/
