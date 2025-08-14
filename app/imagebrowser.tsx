@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import PickImage from '../components/browseImage'; 
+import PickImage from '../components/fab/browseImage';
 
 export default function imageBrowser() {
   return (

@@ -6,12 +6,16 @@ export const colors = {
   background: '#f5f5f5',
   text: '#333',
   buttonBgColor :'#d7c0d1ff',
+  graphBgColor: '#ddcad8ff',
   greenButtonColor: '#83ea9eff',
   redButtonColor: '#e78383ff',
   greybgColor: '#b3b2b2ff',
   darkbgColor: '#201c1cff',
-};
+  surfaceColor: '#e3d3e3ff',
 
+};
+//  ERROR  ERROR loading accounts: [Error: Call to function 'NativeDatabase.prepareAsync' has been rejected.
+// → Caused by: java.lang.NullPointerException: java.lang.NullPointerException]
 //constants
 const { width,height  } = Dimensions.get('window');
 const SCREEN_WIDTH = width;
