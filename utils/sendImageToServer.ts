@@ -26,9 +26,16 @@ export const sendImagesToServer = async (imageStack: string[]): Promise<ServerRe
     });
 
     const json: ServerResponse = await response.json();
-    return json;
+
+    console.log('Server response:', json);
+    
+    if ("error" in json.results) {
+      return { error: json.results.error };
+    } else {
+      return json.results;
+    }
   } catch (err) {
-    console.error('ERROR: Error uploading images:', err);
-    return { error: 'ERROR: Upload failed' };
+    console.log('ERROR: Error uploading images:', err);
+    return { error: 'Failed to upload Images' };
   }
 };

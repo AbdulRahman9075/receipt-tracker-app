@@ -46,10 +46,10 @@ export default function RecordsMenu(
 
      const debouncedSearch = useCallback(
         debounce((text: string) => {
-        search(text); // calls the parent handler
+        search(text);
         console.log("Applied Search", text);
         }, 1000),
-        [] // ensure this doesn't get recreated on every render
+        []
     );
 
 

@@ -1,11 +1,10 @@
 import {useState} from "react";
 import {Pressable, StyleSheet, Text,
   View,ImageBackground,ScrollView  } from "react-native";
-import { IconButton} from 'react-native-paper';
+import { ActivityIndicator, IconButton} from 'react-native-paper';
 import { Image } from "expo-image";
 import {SaveFormat, useImageManipulator } from 'expo-image-manipulator';
 import { ImageEditor } from "expo-dynamic-image-crop";
-
 
 
 import { globalStyles,colors } from '../../assets/styles';
@@ -13,15 +12,16 @@ import { useRouter } from "expo-router";
 import { saveToDatabase } from '../../utils/manageDatabase';
 import { useAccount } from '../../accountContext';
 import { sendImagesToServer } from "../../utils/sendImageToServer";
+import ErrorDialog from "../errorDialog";
 
 type ImageProcesserProps = {
   centerButton: React.ReactNode;  //component
   currentImage: string;
   setCurrentImage: React.Dispatch<React.SetStateAction<string>>; //set function
   currentIndex: number;
-  setCurrentIndex: React.Dispatch<React.SetStateAction<number>>; //set function
+  setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
   imageStack:string[];
-  setStack: React.Dispatch<React.SetStateAction<string[]>>;  //set function
+  setStack: React.Dispatch<React.SetStateAction<string[]>>;  
   
 };
 
@@ -30,8 +30,13 @@ export default function ImageProcesser({centerButton,currentImage, setCurrentIma
   const [loading, setLoading] = useState(false);
   const context = useImageManipulator(currentImage);
   const [isEditing, setIsEditing] = useState(false);
+
+  const [isError,setError] = useState(false);
+  const [errorMessage,setErrorMessage] = useState('')
+  
   let response: any = null
   const router = useRouter();
+
 
 
   const abortProcess =  () => {
@@ -43,21 +48,20 @@ export default function ImageProcesser({centerButton,currentImage, setCurrentIma
   
   const uploadImage = async () => {
     setLoading(true);
-    try {
-      response = await sendImagesToServer(imageStack);
-      // console.log('Server response:', response);
+    response = await sendImagesToServer(imageStack);
+    
+    if('error' in response){
+      console.log("error message=",response.error);
+      setLoading(false);
+      setErrorMessage(response.error);
+      setError(true);
+    }
+    else{
       console.log("SUCCESS: fetched response saving-----");
-        await saveToDatabase(response,accountId);
-        console.log("SUCCESS: redirecting to /records");
-        
-        setStack([]);
-        router.replace('/pages/records')
-      
-    } 
-    catch (err) {
-      console.error(err);
-    } 
-    finally {
+      await saveToDatabase(response,accountId);
+      console.log("SUCCESS: redirecting to /records");
+      setStack([]);
+      router.replace('/pages/records')
       setLoading(false);
     }
   };
@@ -83,6 +87,16 @@ export default function ImageProcesser({centerButton,currentImage, setCurrentIma
     setIsEditing(false);
   };
       
+  if(loading){
+    return (
+    <View style={[globalStyles.screen,styles.center]}>
+      <View>
+        <ActivityIndicator size="large" color={loadingColor} style={{marginBottom: 25}}/>
+        <Text style={styles.loadingtext}>Processing Images</Text>
+      </View>
+    </View>
+    );
+  }
   return (
     (imageStack.length !== 0) && (
     
@@ -177,15 +191,26 @@ export default function ImageProcesser({centerButton,currentImage, setCurrentIma
           onPress={uploadImage}
         />
       </View>
-
+      <ErrorDialog visible={isError} onDismiss={()=>setError(false)} message={errorMessage}/>
     </View>
     )
   );
 }
 
-
+const loadingColor = '#245814ff'
 const elementMargin = 8;
 const styles = StyleSheet.create({
+  loadingtext: {
+    fontSize: 20,
+    color: loadingColor,
+    fontWeight: '700'
+
+  },
+  center: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   imagesender: {
     padding: 15,
     marginTop: 20,

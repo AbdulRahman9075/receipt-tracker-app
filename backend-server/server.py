@@ -28,15 +28,28 @@ async def process_image_endpoint(files: List[UploadFile] = File(...)):
             filelist.append(temp_path)
 
         imagelist=copy.copy(filelist) 
-        print("Starting processing")
-        result = process_image(imagelist)
-        print("SUCCESS: Processing Complete")
+        print("SERVER: Starting processing")
 
+        result = process_image(imagelist)
+
+        #remove this //test
+        ######################
+        # result = {"test": "Message Sent"}    
+        ######################
+        
         for file in filelist:
                 print(file) #test
                 os.remove(file)
 
-        return JSONResponse(content={"results": result})
+        print("SERVER: SUCCESS: Processing Complete")
+
+        
+        if 'error' in result:
+            return JSONResponse(content={"results": {"error": "Internal Server Error"}})
+        else:
+            return JSONResponse(content={"results": result})
+
+        
     except Exception as err:
-         print(f"ERROR: Server error: {err}")
+         print(f"SERVER ERROR: Server error: {err}")
          return JSONResponse(content={"results": {"error": "Internal Server Error"}})

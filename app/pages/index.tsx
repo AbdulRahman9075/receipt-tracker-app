@@ -1,4 +1,3 @@
-import { Link } from 'expo-router'
 import { useState,useEffect } from 'react'
 import { StyleSheet, Text, View,Button,ScrollView} from 'react-native'
 import { monthlySum } from '../../utils/manageDatabase'
@@ -6,10 +5,11 @@ import { useAccount } from '../../accountContext'
 import { PointsChart } from '../../components/LineChart'
 import { Surface,Icon } from 'react-native-paper'
 import { colors, globalStyles } from '../../assets/styles'
-import { useSearchStore,useCurrencyStore} from '../../stores/Store'
+import { useSearchStore,useCurrencyStore,useItemsStore} from '../../stores/Store'
+import { storeDefaultAccount,getDefaultAccount } from '../../stores/asyncstorage';
 
-//known random errors: 
-// ERROR loading accounts: [Error: Call to function 'NativeDatabase.prepareAsync' has been rejected.
+//known error
+//  ERROR  ERROR loading accounts: [Error: Call to function 'NativeDatabase.prepareAsync' has been rejected.
 // → Caused by: java.lang.NullPointerException: java.lang.NullPointerException]
 const Home = () => {
   const { accountId, setAccountId } = useAccount();
@@ -26,6 +26,9 @@ const Home = () => {
 
   const searchResults = useSearchStore((state) => state.results);
   const Currency = useCurrencyStore((state) => state.currency);
+  const Items = useItemsStore((state) => state.items);
+
+  const [defaultAccount,setDefault] = useState(false);
 
 //   [{"month": "Aug", "sum": 50, "year": "2025"},
 //    {"month": "Jul", "sum": 5000, "year": "2025"},
@@ -64,9 +67,9 @@ const Home = () => {
       dates.push(formatted);
 
     }
-    console.log(quantities);
-    console.log(unitprices);
-    console.log(dates);
+    // console.log(quantities);
+    // console.log(unitprices);
+    // console.log(dates);
 
     setSearchUnitPrices(unitprices);
     setSearchQuantities(quantities);
@@ -79,7 +82,7 @@ const Home = () => {
     if(!sums || !sums.length || sums.length < 1) {
       setMonthlySums([]);
       setsumsXLabels([]);
-      console.log('SUCCESS: set sumgraphdata');
+      console.log('SUCCESS: database empty, set to null');
       return;
     }
     console.log('setting graph data---');
@@ -97,7 +100,7 @@ const Home = () => {
   };
 
   const setCurrentTotals = (sums: any)=> {
-    if(!sums || !sums.length || sums.length < 1) {
+    if(sums === null || sums === undefined || !sums.length || sums.length < 1) {
       setCurrentMonthSum(null);
       setchangeFromPrev(null);
       console.log('SUCCESS: set current totals');
@@ -110,7 +113,7 @@ const Home = () => {
     const thisyear = today.getFullYear();
     const prevMonth = (new Date(today.getFullYear(), today.getMonth() - 1, today.getDate())).toLocaleString('en-US', { month: 'short' });
     console.log(`thismonth=${thismonth} thisyear=${thisyear} prevmonth=${prevMonth}`);
-    console.log(`thismonth=${sums[0].month} thisyear=${sums[1].year} prevmonth=${sums[1].month}`);
+    console.log(sums);
     if (sums[0] && sums[0].month == thismonth && sums[0].year == thisyear){
       setCurrentMonthSum(sums[0].sum);
     }
@@ -140,47 +143,47 @@ const Home = () => {
     console.log('SUCCESS: set current totals');
   }
 
-  // useEffect(() => {
-  //   let isMounted = true;
-  //   if (accountId) {
-  //     (async () => {
-  //       const sums = await monthlySum(accountId);
-  //       console.log(sums);
-  //       setCurrentTotals(sums);
-  //       setSumsGraphData(sums);
-  //     })();
-  //   }
-  //   return () => {
-  //     isMounted = false;
-  //   };
-  // }, [accountId]);
-
-
-
 
   useEffect(() => {
   let isMounted = true;
 
+  //test
+    const applydefaultaccount = async () => {
+      const def_id = await getDefaultAccount();
+      console.log(def_id);
+      if(!def_id){
+        console.log("NO DEFAULT ACCOUNT FOUND");
+        setDefault(false);
+      }
+      else{
+        console.log("def_id=",Number(def_id));
+        setAccountId(Number(def_id));
+        setDefault(true);
+      } 
+    }
+    applydefaultaccount();
+  //
+
+
   if (accountId) {
+    if (!isMounted) return;   
     (async () => {
       const sums = await monthlySum(accountId);
-      if (!isMounted) return; // ✅ Prevent state updates after unmount
       setCurrentTotals(sums);
       setSumsGraphData(sums);
     })();
   }
-
   return () => {
     isMounted = false;
   };
-}, [accountId]);
+}, [accountId,Items]);
 
 
   useEffect(() => {
     let isMounted = true;
     if (searchResults.length > 0) {
       if (!isMounted) return;
-      setSearchGraphData(); // this will pull from global store internally
+      setSearchGraphData();
     }
 
     return () => {
@@ -192,7 +195,6 @@ const Home = () => {
     <ScrollView style={globalStyles.screen}
     contentContainerStyle={{ paddingBottom: 20 }} 
     >
-      {/* <Text style={styles.title}>Home</Text> */}
       <View style={styles.dataBox}>
         <Surface  style={styles.surface} elevation={2}>
           <Text style={styles.title}>Total Expenses this Month</Text>
@@ -204,41 +206,29 @@ const Home = () => {
           </View>
         </Surface>
       </View>
-    
-    
-    {monthlySums.length > 0 && sumsXLabels.length > 0 && (
+      {/* {(defaultAccount===false || (Items && Items.length < 1)) && <Text style={[globalStyles.placeholder]}>No Data</Text>}
+       */}
+      {monthlySums.length > 0 && sumsXLabels.length > 0 && (
       <>
       <Text style={styles.graphtitle}>Total Expenses Over Time</Text>
       <PointsChart  labels={sumsXLabels} data={monthlySums} currency={Currency}/>
       </>
-    )}
+      )}
 
-    {searchUnitPrices.length > 0 && searchXLabels.length> 0 && (
-      <>
-      <Text style={styles.graphtitle}>Unit Price Over Time</Text>
-      <PointsChart labels={searchXLabels} data={searchUnitPrices} currency={Currency}/>
-      </>
-    )}
+      {searchUnitPrices.length > 0 && searchXLabels.length> 0 && (
+        <>
+        <Text style={styles.graphtitle}>Unit Price Over Time</Text>
+        <PointsChart labels={searchXLabels} data={searchUnitPrices} currency={Currency}/>
+        </>
+      )}
 
-    {searchQuantities.length > 0 && searchXLabels.length> 0 && (
-      <>
-      <Text style={styles.graphtitle}>Quantity Consumed Over Time</Text>
-      <PointsChart labels={searchXLabels} data={searchQuantities}/>
-      </>
-    )}
+      {searchQuantities.length > 0 && searchXLabels.length> 0 && (
+        <>
+        <Text style={styles.graphtitle}>Quantity Consumed Over Time</Text>
+        <PointsChart labels={searchXLabels} data={searchQuantities}/>
+        </>
+      )}
     
-    {/* //test */}
-    {/* <Text selectable style={{ fontFamily: 'monospace' }}>
-      {JSON.stringify(searchUnitPrices, null, 2)}
-    </Text>
-    <Text selectable style={{ fontFamily: 'monospace' }}>
-      {JSON.stringify(searchQuantities, null, 2)}
-    </Text>
-    <Text selectable style={{ fontFamily: 'monospace' }}>
-      {JSON.stringify(searchXLabels, null, 2)}
-    </Text> */}
-    
-
     </ScrollView>
   )
 }
@@ -288,6 +278,6 @@ const styles = StyleSheet.create({
   fontSize: 25,
   fontWeight: 'bold',
   marginTop: 40,
- }
+ },
 
 })

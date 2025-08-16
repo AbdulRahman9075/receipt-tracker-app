@@ -19,3 +19,23 @@ export const useCurrencyStore = create<CurrencyState>((set) => ({
   currency: '',
   setCurrency: (data) => set({ currency: data }),
 }));
+
+type ItemsState = {
+  items: any[];
+  setItems: (data: any[]) => void;  
+  addItem: (item: any) => void;     
+  removeItem: (item: any) => void; 
+};
+
+export const useItemsStore = create<ItemsState>((set) => ({
+  items: [],
+  setItems: (data) => set({ items: data }),
+  addItem: (item) =>
+    set((state) => ({
+      items: [...state.items, item],
+    })),
+  removeItem: (item) =>
+    set((state) => ({
+      items: state.items.filter((i) => i !== item),
+    })),
+}));

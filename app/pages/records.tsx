@@ -5,9 +5,7 @@ import { globalStyles,colors } from '../../assets/styles';
 import RecordsMenu from '../../components/records/RecordsMenu';
 import { Surface,IconButton } from 'react-native-paper';
 import { useAccount } from '../../accountContext';
-import { useSearchStore,useCurrencyStore } from '../../stores/Store'
-
-
+import { useSearchStore,useCurrencyStore,useItemsStore } from '../../stores/Store'
 
 const Records = () => {
   const [items, setItems] = useState<any[]>([]);
@@ -17,43 +15,54 @@ const Records = () => {
   const setResults = useSearchStore((state) => state.setResults);
   const Currency = useCurrencyStore((state) => state.currency);
 
-  const receiptdata= {
-   'location': 'GULSHAN',
-   'date': 'Apr 13, 2025 1:25 PM', 
-   'items': [
-      {
-        'itemname': 'Fresh Capsicum (Shimla Mirch)', 
-        'unitprice': 55.0, 
-        'totalprice': 22.88
-      }, 
-      {'itemname': 'Fresh Lemon (Des1)', 'unitprice': 649.0, 'totalprice': 294.65},
-      {'itemname': 'Soya Supreme Cokng Oil Poly Bag 1ltr', 'unitprice': 2740.0, 'totalprice': 2740.0},
-      {'itemname': 'Fresh Apple (White Kulu)', 'unitprice': 379.0, 'totalprice': 360.05}, 
-      // {'itemname': 'Mtton Shoulder', 'unitprice': 2089.0, 'totalprice': 3263.02}, 
-      // {'itemname': 'Pnam Tez Patta', 'unitprice': 999.0, 'totalprice': 49.95}, 
-      // {'itemname': 'Fresh Green Chiili', 'unitprice': 89.0, 'totalprice': 22.78},
-      // {'itemname': 'Pnam Dhania Whole 100g', 'unitprice': 65.0, 'totalprice': 65.0},
-      // {'itemname': 'Fresh Musk MeTon (Garma)', 'unitprice': 119.0, 'totalprice': 111.38}, 
-      // {'itemname': "Bking's Cake Plain 250g", 'unitprice': 275.0, 'totalprice': 275.0}, 
-      // {'itemname': 'Rafhan Jy Pwdr Strwbry 80G', 'unitprice': 149.0, 'totalprice': 149.0}, 
-      // {'itemname': "Rse Petal Party Pack 300's White", 'unitprice': 235.0, 'totalprice': 235.0}, 
-      // {'itemname': "LIWheatable T/P 15's Bx", 'unitprice': 265.0, 'totalprice': 265.0}, 
-      // {'itemname': "LIWheatble Carcmom 15's Rs.20 Bx", 'unitprice': 269.0, 'totalprice': 269.0}, 
-      // {'itemname': 'Cipri Sop Vitalizing Wtr Lily 3X120G', 'unitprice': 349.0, 'totalprice': 349.0}, 
-      // {'itemname': 'Sigar 1kg (Loose)', 'unitprice': 173.0, 'totalprice': 173.0}, 
-      // {'itemname': 'Ponan Dal Masoor 500g', 'unitprice': 145.0, 'totalprice': 145.0}, 
-      // {'itemname': 'Nationa1 Salt Ldzed800G', 'unitprice': 59.0, 'totalprice': 59.0}, 
-      // {'itemname': "Hckey Mtch Bx Rs7/-10'S", 'unitprice': 49.0, 'totalprice': 49.0}
-    ]
-  }
+  const { items: globalItems, setItems: setGlobalItems, removeItem } = useItemsStore();
+
+  const [isSearch, setisSearch] = useState(false);
+  const [isFilter, setisFilter] = useState(false);
+
+  //test data
+
+  // const receiptdata= {
+  //  'location': 'GULSHAN',
+  //  'date': 'Apr 13, 2025 1:25 PM', 
+  //  'items': [
+  //     {
+  //       'itemname': 'Fresh Capsicum (Shimla Mirch)', 
+  //       'unitprice': 55.0, 
+  //       'totalprice': 22.88
+  //     }, 
+  //     {'itemname': 'Fresh Lemon (Des1)', 'unitprice': 649.0, 'totalprice': 294.65},
+  //     {'itemname': 'Soya Supreme Cokng Oil Poly Bag 1ltr', 'unitprice': 2740.0, 'totalprice': 2740.0},
+  //     {'itemname': 'Fresh Apple (White Kulu)', 'unitprice': 379.0, 'totalprice': 360.05}, 
+  //     {'itemname': 'Mtton Shoulder', 'unitprice': 2089.0, 'totalprice': 3263.02}, 
+  //     {'itemname': 'Pnam Tez Patta', 'unitprice': 999.0, 'totalprice': 49.95}, 
+  //     {'itemname': 'Fresh Green Chiili', 'unitprice': 89.0, 'totalprice': 22.78},
+  //     {'itemname': 'Pnam Dhania Whole 100g', 'unitprice': 65.0, 'totalprice': 65.0},
+  //     {'itemname': 'Fresh Musk MeTon (Garma)', 'unitprice': 119.0, 'totalprice': 111.38}, 
+  //     {'itemname': "Bking's Cake Plain 250g", 'unitprice': 275.0, 'totalprice': 275.0}, 
+  //     {'itemname': 'Rafhan Jy Pwdr Strwbry 80G', 'unitprice': 149.0, 'totalprice': 149.0}, 
+  //     {'itemname': "Rse Petal Party Pack 300's White", 'unitprice': 235.0, 'totalprice': 235.0}, 
+  //     {'itemname': "LIWheatable T/P 15's Bx", 'unitprice': 265.0, 'totalprice': 265.0}, 
+  //     {'itemname': "LIWheatble Carcmom 15's Rs.20 Bx", 'unitprice': 269.0, 'totalprice': 269.0}, 
+  //     {'itemname': 'Cipri Sop Vitalizing Wtr Lily 3X120G', 'unitprice': 349.0, 'totalprice': 349.0}, 
+  //     {'itemname': 'Sigar 1kg (Loose)', 'unitprice': 173.0, 'totalprice': 173.0}, 
+  //     {'itemname': 'Ponan Dal Masoor 500g', 'unitprice': 145.0, 'totalprice': 145.0}, 
+  //     {'itemname': 'Nationa1 Salt Ldzed800G', 'unitprice': 59.0, 'totalprice': 59.0}, 
+  //     {'itemname': "Hckey Mtch Bx Rs7/-10'S", 'unitprice': 49.0, 'totalprice': 49.0}
+  //   ]
+  // }
 
   useEffect(() => {
     let isMounted = true;
     if(accountId){
+      if (!isMounted) return;
       const fetchItems = async () => {
         setLoading(true);
+        setisSearch(false);
+        setisFilter(false);
         const result = await loadfromDatabase(accountId);
         setItems(result);
+        setGlobalItems(result);
         setLoading(false);
       };
       fetchItems();
@@ -65,12 +74,16 @@ const Records = () => {
 
   const reloadData = async () => {
     setLoading(true);
+    setisSearch(false);
+    setisFilter(false);
     setItems([]);
     const result = await loadfromDatabase(accountId);
     setItems(result);
+    setGlobalItems(result);
     setLoading(false);
   };
   const reloadWithFilters = async (filterValues: any) => {
+    setisFilter(true);
     setLoading(true);
     setItems([]);
     if(!accountId){console.log("no default account set")}
@@ -81,6 +94,7 @@ const Records = () => {
     }
   };
   const handleSearch = async (query: string) => {
+    setisSearch(true);
     setLoading(true);
     setItems([]);
     if (query.trim() === '') {
@@ -102,7 +116,8 @@ const Records = () => {
   }
   return (
     <View style={globalStyles.screen}>
-      <RecordsMenu  reload={reloadData} filter={reloadWithFilters} search={handleSearch}/>
+      {(!accountId || (globalItems && globalItems.length < 1)) && <Text style={globalStyles.placeholder}>No Record Found</Text>}
+      {(accountId && (globalItems && globalItems.length > 0)) && <RecordsMenu  reload={reloadData} filter={reloadWithFilters} search={handleSearch}/>}
 
       
       
@@ -116,8 +131,11 @@ const Records = () => {
       /> 
        */}
       <FlatList
-      data={items}
-      keyExtractor={(item) => item.id.toString()}
+      data={(isSearch || isFilter)?items:(globalItems && Array.isArray(globalItems) ? globalItems : [])}  
+      keyExtractor={(item, index) =>
+        item && item.id != null ? item.id.toString() : index.toString()
+      }
+      //
       renderItem={({ item }) => (
         <Surface style={styles.surface} elevation={2}>
           <View style={[styles.border,styles.first]}>
@@ -128,7 +146,7 @@ const Records = () => {
             <View style={[styles.border,styles.bottomrow]}>
               <View style = {styles.details}>
               <Text style={[styles.location]}><Text style={{fontWeight: 'bold'}}>Location:</Text> {item.location}</Text>
-              <Text style={[styles.date]}>{item.date}</Text>
+              <Text style={[styles.date]}>{new Date(item.date).toLocaleString()}</Text>
               </View>
               <Text 
               style={styles.totalprice}
@@ -142,8 +160,8 @@ const Records = () => {
                 size={20}
                 onPress={async () =>{
                     await deleteSingleItem(accountId,item.id);
-                    reloadData();
-                    console.log("Deleted item",item.itemname)
+                    removeItem(item);
+
                 }}
                 // containerColor='black'
                 
@@ -208,6 +226,9 @@ const styles = StyleSheet.create({
   location: {
   },
   date: {
+    paddingVertical: 10,
+    fontSize: 15,
+    fontWeight: 'bold'
   },
   details: {
     padding: 5,

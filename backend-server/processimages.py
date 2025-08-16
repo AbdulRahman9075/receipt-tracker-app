@@ -39,13 +39,15 @@ def process_image(imagelist):
 
         dataobj = {}
         if 'error' in jsonresp:
-            #DO THIS: add this to the logger
-            dataobj = jsonresp['error']
+            
+            ##add print statements to logger
             print("Code: ",dataobj['code'])
             print("Message: ",dataobj['message'])
             print("Reason: ",dataobj['metadata']['raw'])
+            ##
+
             # frontend error
-            #dataobj = {"error":"ERROR: Server Internal PROCESSING Error"}
+            dataobj = {"error":"Server Internal Processing Error"}
         else:
             
             dataobj= json.loads(jsonresp['choices'][0]['message']['content'])
@@ -53,9 +55,9 @@ def process_image(imagelist):
                 item['unitprice'] = float(clean_float_string(item['unitprice'])) 
                 item['totalprice'] = float(clean_float_string(item['totalprice']))
             
-            print(dataobj)  #test
+        print(dataobj)  #test
         return dataobj
     except Exception as err:
-        errorobj = {"error":"ERROR: Server Internal PROCESSING Error"}
-        print(f"ERROR: {err}") #DO THIS: add this to the logger
+        errorobj = {"error":"Server Internal Processing Error"}
+        print(f"ERROR: {err}") #add this to the logger
         return errorobj

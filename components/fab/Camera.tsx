@@ -18,7 +18,6 @@ export default function Camera() {
   const [currentImage, setCurrentImage] = useState<string>("");
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
 
-  // const router = useRouter();
   const isFocused = useIsFocused();
   useEffect(() => {
     if (permission && !permission.granted) {

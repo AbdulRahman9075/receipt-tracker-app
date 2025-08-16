@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system';
-import { ReceiptJSON,Item,processJSON} from './utilities';
+import { ReceiptJSON,Item,processJSON,formatDate} from './utilities';
 
 // file
 export const DBNAME: string = 'records.db';
@@ -50,7 +50,7 @@ export const addAccount =  async (account: Account) =>{
   console.log('SUCCESS: account created');
 }
 
-export const loadAccounts = async (): Promise<Account[] | { error: string }> => {
+export const loadAccounts = async (): Promise<Account[] | { error: string } | undefined> => {
   console.log('loading accounts-----');
   const db = await SQLite.openDatabaseAsync(DBNAME);
 
@@ -61,7 +61,8 @@ export const loadAccounts = async (): Promise<Account[] | { error: string }> => 
     );
 
     if (tableCheck.length === 0) {
-      return { error: 'No accounts table found. Please create an account first.' };
+      console.log('SUCCESS: No Account Found');
+      return;
     }
 
     // Fetch accounts
@@ -70,7 +71,8 @@ export const loadAccounts = async (): Promise<Account[] | { error: string }> => 
     );
 
     if (rows.length === 0) {
-      return { error: 'No accounts found. Please create an account.' };
+      console.log('SUCCESS: No Account Found');
+      return;
     }
 
     console.log('SUCCESS: ACCOUNTS LOADED');
@@ -121,14 +123,22 @@ export const saveToDatabase =  async (receiptresponse: ReceiptJSON,account_id: n
 }
 
 export const loadfromDatabase = async (account_id: number): Promise<Item[]> => {
-  console.log('loading database-----');
+  console.log('opening database-----');
   const db = await SQLite.openDatabaseAsync(DBNAME);
-  await db.execAsync(itemSchema);
   console.log('generating rows---');
   const rows = await db.getAllAsync<Item>(
-  'SELECT * FROM allitems WHERE account_id = ? ORDER BY date DESC',
+  `SELECT * 
+   FROM allitems 
+   WHERE account_id = ? 
+   ORDER BY datetime(date) DESC`,
   [account_id]
 );
+  // sort in descending order
+  // rows.sort((a, b) => {
+  //   const dateA = new Date(a.date).getTime();
+  //   const dateB = new Date(b.date).getTime();
+  //   return dateB - dateA; // Descending
+  // });
   console.log('SUCCESS: DATABASE LOADED for: ',account_id);
   return rows;
 };
@@ -186,15 +196,15 @@ export const addEntry =  async (item: Item,account_id:number) =>{
       item.totalprice,
       item.quantity,
       item.location,
-      (item.date).toString(),
+      item.date,
     );
   console.log(`${item.date}`);
   console.log(`SUCCESS: SINGLE item saved to: ${account_id}`);
 }
 
 type FilterOptions = {
-  startDate: string; 
-  endDate: string;
+  startDate: Date; 
+  endDate: Date;
   min: number;
   max: number;
   constant: number;
@@ -209,17 +219,17 @@ export const applyFilters = async (filters: FilterOptions,account_id:number): Pr
 
   if (filters.startDate === undefined && filters.endDate) {
     conditions.push('date <= ?');
-    params.push(filters.endDate);
+    params.push(formatDate(filters.endDate));
   }
 
   if (filters.endDate === undefined && filters.startDate) {
     conditions.push('date >= ?');
-    params.push(filters.startDate);
+    params.push(formatDate(filters.startDate));
   }
 
   if (filters.startDate && filters.endDate) {
     conditions.push('date BETWEEN ? AND ?');
-    params.push(filters.startDate,filters.endDate);
+    params.push(formatDate(filters.startDate),formatDate(filters.endDate));
   }
 
   if (!isNaN(filters.constant) && filters.constant !== Infinity) {
@@ -253,6 +263,8 @@ export const applyFilters = async (filters: FilterOptions,account_id:number): Pr
   const rows = await db.getAllAsync<Item>(query, fullParams);
 
   console.log(`SUCCESS- filter applied: ${query} `);
+  console.log(fullParams);
+  console.log(rows);
   return rows;
 };
 
@@ -264,6 +276,7 @@ export const searchDB = async (query: string,account_id: number): Promise<Item[]
       'SELECT * FROM allitems WHERE account_id = ? AND itemname LIKE ? COLLATE NOCASE ORDER BY date DESC',
       [account_id,`%${query}%`]
   );
+  console.log(results);
   return results;
 
 }

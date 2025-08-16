@@ -3,25 +3,18 @@ import {
   Modal,
   Portal,
   Button,
-  Text,
   TextInput,
   IconButton
 } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { globalStyles,colors } from '../../assets/styles';
-import { parseNumber,Item } from '../../utils/utilities';
+import { parseNumber,Item, formatDate } from '../../utils/utilities';
 import ErrorDialog from '../errorDialog';
-import { addEntry } from '../../utils/manageDatabase';
+import { addEntry} from '../../utils/manageDatabase';
 import { useAccount } from '../../accountContext';
+import { useItemsStore } from '../../stores/Store';
 
-
-// itemname: string;
-// unitprice: number;
-// totalprice: number;
-// location: string;
-// date: string; // ISO format
-// quantity: number;
 
 type dataModalProps = {
   visible: boolean;
@@ -44,10 +37,14 @@ export default function AddEntryModal({
   const [Quantity, setQuantity] = useState('');
   const [totalPrice, setTotalPrice] = useState('');
 
+  const globalItems = useItemsStore((state) => state.items);
+  const {addItem} = useItemsStore.getState();
+
   const handleApply = async () => {
     let totalprice = parseNumber(totalPrice);
     let quantity = parseNumber(Quantity);
-    const date= (theDate===undefined)?new Date():theDate;
+    const date= formatDate((theDate===undefined)?new Date():theDate);
+
     if(isNaN(totalprice) || isNaN(quantity) || totalprice === Infinity || quantity === Infinity ) {
       setError(true);
       clearForm();
@@ -59,7 +56,11 @@ export default function AddEntryModal({
     let itemname = itemName;
     let location = Location;
     const item:Item = {itemname,unitprice,totalprice,quantity,location,date}
+
+
     await addEntry(item,accountId)
+    addItem(item) 
+
     clearForm();
     onDismiss();
   };

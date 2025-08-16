@@ -65,6 +65,7 @@ export default function FilterModal({
       max = NaN;
     }
     onApplyFilters({ startDate, endDate, min, max,constant});
+    clearForm();
     onDismiss();
   };
 

@@ -2,7 +2,7 @@ import { StyleSheet ,Dimensions} from 'react-native';
 
 //colors
 export const colors = {
-  primary: '#6200ee',
+  primary: '#6200ee' ,
   background: '#f5f5f5',
   text: '#333',
   buttonBgColor :'#d7c0d1ff',
@@ -12,10 +12,10 @@ export const colors = {
   greybgColor: '#b3b2b2ff',
   darkbgColor: '#201c1cff',
   surfaceColor: '#e3d3e3ff',
+  placeholderColor:'#a39f9fff',
 
 };
-//  ERROR  ERROR loading accounts: [Error: Call to function 'NativeDatabase.prepareAsync' has been rejected.
-// → Caused by: java.lang.NullPointerException: java.lang.NullPointerException]
+
 //constants
 const { width,height  } = Dimensions.get('window');
 const SCREEN_WIDTH = width;
@@ -41,15 +41,20 @@ export const globalStyles = StyleSheet.create({
     backgroundColor: '#eee',
   },
   iconButtonStyles: {
-    // padding:0,
-    // margin:0,
     width: 50,
     height: 50,
-    // position: 'relative',
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.buttonBgColor,
-  }
+  },
+  placeholder: {
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    height: '90%',
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: colors.placeholderColor,
+  },
 });
 
 export {SCREEN_WIDTH,SCREEN_HEIGHT}

@@ -1,8 +1,9 @@
 import{useState} from 'react';
-import { FAB, Portal, PaperProvider} from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { FAB, Portal} from 'react-native-paper';
 import { useRouter,usePathname} from "expo-router";
 import AddEntryModal from './dataEntryModal';
+import { useAccount } from '../../accountContext';
+
 const UniversalAddButton = () => {
   const [state, setState] = useState<{ open: boolean }>({ open: false });
   const onStateChange = (newState: { open: boolean }) => setState(newState);
@@ -14,8 +15,12 @@ const UniversalAddButton = () => {
   const router = useRouter();
   const { open } = state;
   const pathname = usePathname();
+
+  const { accountId, setAccountId } = useAccount();
   // console.log(pathname);
-  return (
+
+return (
+
       <Portal
       
       >
@@ -36,7 +41,7 @@ const UniversalAddButton = () => {
             
           }}
           open={open}
-          visible={pathname === '/pages' || pathname === '/pages/records' || pathname === '/'}
+          visible={ !!accountId && (pathname === '/pages' || pathname === '/pages/records' || pathname === '/')}
           icon={
             open ? 'receipt' : 'plus'
             
@@ -59,7 +64,7 @@ const UniversalAddButton = () => {
           onStateChange={onStateChange}
           onPress={() => {
             if (open) {
-              // do something if the speed dial is open
+              
             }
           }}
         />

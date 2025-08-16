@@ -8,8 +8,6 @@ import {
 import { View, StyleSheet } from 'react-native';
 import ErrorDialog from '../errorDialog';
 import { addAccount } from '../../utils/manageDatabase';
-import { useCurrencyStore } from '../../stores/Store';
-// import { useAccounts } from '../context/accountsContext';
 
 type AccountModalProps = {
   visible: boolean;
@@ -25,9 +23,7 @@ export default function AccountModal({
     reload,
     setglobalcurrency
 }: AccountModalProps) {
-
-
-  // const { accounts, addAccount, error } = useAccounts();
+  
   const [showError,setError] = useState(false);
 
   const [AccountName, setAccountName] = useState('');
@@ -46,6 +42,7 @@ export default function AccountModal({
     console.log(account);
     await addAccount({name: AccountName,currency: Currency});
     reload();
+    clearForm();
     onDismiss();
   };
 
