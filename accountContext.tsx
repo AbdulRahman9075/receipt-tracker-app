@@ -2,7 +2,7 @@ import { createContext, useState, useContext } from 'react';
 
 interface AccountContextType {
   accountId: number | null;
-  setAccountId: (id: number) => void;
+  setAccountId: (id: number | null) => void;
 }
 
 const AccountContext = createContext<AccountContextType | undefined>(undefined);

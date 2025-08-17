@@ -1,6 +1,6 @@
 import { useState,useEffect } from 'react'
 import { StyleSheet, Text, View,Button,ScrollView} from 'react-native'
-import { monthlySum } from '../../utils/manageDatabase'
+import { getAccountCurrency, monthlySum } from '../../utils/manageDatabase'
 import { useAccount } from '../../accountContext'
 import { PointsChart } from '../../components/LineChart'
 import { Surface,Icon } from 'react-native-paper'
@@ -25,7 +25,7 @@ const Home = () => {
   const [searchXLabels, setSearchXLabels] = useState<string[]>([]);
 
   const searchResults = useSearchStore((state) => state.results);
-  const Currency = useCurrencyStore((state) => state.currency);
+  const {currency: Currency,setCurrency:setGlobalCurrency} = useCurrencyStore();
   const Items = useItemsStore((state) => state.items);
 
   const [defaultAccount,setDefault] = useState(false);
@@ -38,7 +38,7 @@ const Home = () => {
 //    "date": "2025-04-13T13:25:00",
 //     "id": 44, "itemname": "Fresh Capsicum (Shimla Mirch)", 
 //     "location": "GULSHAN", "quantity": 0.42, "totalprice": 22.88, "unitprice": 55},
-//   {"account_id": 8, "date": "2025-04-13T13:25:00",
+//   {"account_id": 8, "date": "2025-04-13T13:25:00",r
 //      "id": 45, "itemname": "Fresh Lemon (Des1)", 
 //      "location": "GULSHAN", "quantity": 0.45, "totalprice": 294.65, "unitprice": 649}, 
 // {"account_id": 8, "date": "2025-04-13T13:25:00",
@@ -147,7 +147,7 @@ const Home = () => {
   useEffect(() => {
   let isMounted = true;
 
-  //test
+  // //test
     const applydefaultaccount = async () => {
       const def_id = await getDefaultAccount();
       console.log(def_id);
@@ -158,11 +158,16 @@ const Home = () => {
       else{
         console.log("def_id=",Number(def_id));
         setAccountId(Number(def_id));
+        const currency = await getAccountCurrency(Number(def_id));
+        if (currency) {
+          setGlobalCurrency(currency);
+          console.log(`currency ${currency} set for account: ${def_id}`);
+        }
         setDefault(true);
       } 
     }
     applydefaultaccount();
-  //
+  // //
 
 
   if (accountId) {
@@ -206,8 +211,8 @@ const Home = () => {
           </View>
         </Surface>
       </View>
-      {/* {(defaultAccount===false || (Items && Items.length < 1)) && <Text style={[globalStyles.placeholder]}>No Data</Text>}
-       */}
+      {/* {(!accountId || (Items && Items.length < 1)) && <Text style={[globalStyles.placeholder]}>No Data</Text>} */}
+      
       {monthlySums.length > 0 && sumsXLabels.length > 0 && (
       <>
       <Text style={styles.graphtitle}>Total Expenses Over Time</Text>

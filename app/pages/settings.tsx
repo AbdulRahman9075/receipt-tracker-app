@@ -5,9 +5,9 @@ import {loadAccounts,deleteAccount} from '../../utils/manageDatabase';
 import { FAB,Surface,IconButton,Switch } from 'react-native-paper';
 import ErrorDialog from '../../components/errorDialog';
 import { useAccount } from '../../accountContext';
-import { useSearchStore,useCurrencyStore} from '../../stores/Store'
+import { useSearchStore,useCurrencyStore,useItemsStore} from '../../stores/Store'
 import AccountModal from '../../components/accounts/accountModal';
-import { storeDefaultAccount,getDefaultAccount } from '../../stores/asyncstorage';
+import { storeDefaultAccount,getDefaultAccount, removeDefaultAccount } from '../../stores/asyncstorage';
 
 
 const Settings = () => {
@@ -23,12 +23,12 @@ const Settings = () => {
     const [message,setMessage] = useState('');
 
 
-
     // const [defaultAccount,setDefault] = useState(false);
 
 
 
     const setGlobalCurrency = useCurrencyStore((state) => state.setCurrency);
+    const {setItems: setGlobalItems} = useItemsStore();
 
 
     useEffect(() => {
@@ -83,7 +83,10 @@ const Settings = () => {
     return (
         <View style={globalStyles.screen}>
             <Text style={styles.title}>Manage Accounts</Text>
-            {loading && <ActivityIndicator />}
+            {!loading && ((!accountId  || (accountId && accountId < 0)) && Accounts && Accounts.length > 0) && ( 
+                <Text style={styles.nodefault}>No Account Selected</Text>
+            )}
+            {/* {loading && <ActivityIndicator />} */}
 
              {!loading && (!Accounts || (Accounts && Accounts.length < 1)) && ( 
                 <Text style={styles.placeholder}>Create an Account</Text>
@@ -116,7 +119,13 @@ const Settings = () => {
                             iconColor= 'white'
                             size={20}
                             onPress={async () =>{
-                                await deleteAccount(item.id)
+                                const id = item.id
+                                await deleteAccount(id);
+                                if(accountId === id){
+                                    setAccountId(-1);
+                                    removeDefaultAccount();
+                                    setGlobalItems([]);
+                                }
                                 reloadAccounts();
                             }}
                             containerColor='black'
@@ -155,6 +164,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textAlignVertical: 'center',
     height: '90%',
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: colors.placeholderColor,
+  },
+  nodefault: {
+    paddingVertical: 20,
+    marginVertical: 10,
+    textAlign: 'center',
+    textAlignVertical: 'center',
     fontSize: 25,
     fontWeight: 'bold',
     color: colors.placeholderColor,

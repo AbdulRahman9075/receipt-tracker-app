@@ -84,6 +84,18 @@ export const loadAccounts = async (): Promise<Account[] | { error: string } | un
   }
 };
 
+export const getAccountCurrency = async (account_id: number) => {
+  console.log('loading currency-----');
+  const db = await SQLite.openDatabaseAsync(DBNAME);
+
+  const result = await db.getFirstAsync<{ currency: string }>(
+    'SELECT currency FROM accounts WHERE id = ?',
+    [account_id]
+  );
+
+  return result?.currency ?? null;
+};
+
 export const deleteAccount =  async (account_id:number) => {
   const db = await SQLite.openDatabaseAsync(DBNAME);
 

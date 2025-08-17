@@ -19,3 +19,9 @@ export const getDefaultAccount= async ()=> {
     return null;
   }
 };
+
+export const removeDefaultAccount= async ()=> {
+    await AsyncStorage.removeItem('default-account-key');
+    const value = await AsyncStorage.getItem('default-account-key');
+    console.log("Stored value deleted: value=",)
+};
