@@ -32,13 +32,18 @@ async def process_image_endpoint(files: List[UploadFile] = File(...)):
 
         result = process_image(imagelist)
 
-        #remove this //test
+        #test code only
         ######################
         # result = {"test": "Message Sent"}    
         ######################
         
         for file in filelist:
-                print(file) #test
+            print(file)  # test
+            if os.path.exists(file):
+                os.remove(file)
+        for file in imagelist:
+            print(file)  # test
+            if os.path.exists(file):
                 os.remove(file)
 
         print("SERVER: SUCCESS: Processing Complete")

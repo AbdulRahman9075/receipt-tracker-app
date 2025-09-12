@@ -18,13 +18,13 @@ def text_to_json(textlist,modelname,modelkey):
           "role": "user",
           "content": f"""
                       {textlist}
-                      this is a list of string elements which contains receipt information. you are a receipt analyser which will
-                      extract information I specify from this list. DONOT add or generate any values from yourself, only use the values already present 
+                      this is a list of string elements which contains receipt information. you are a receipt analyser and JSON object creator which will
+                      use information in this list. DONOT add or generate any values from yourself, only use the values already present 
                       in the elements of the list provided.
                       Create a JSON object with the following keys and values specified:
-                      1- location: to extract follow this: From the element after the FBR invoice value which has 3 words connected with hyphens('abc-efg-xyz pqr'). The first and 
-                      third words in this 3 word string is the location therefore location should be like 'xyz pqr-abc'
-                      2- date: to extract follow this: the value of Transaction Date, include both the date and time provided. the datetime value may not 
+                      1- location: to extract follow this: From the element after the FBR invoice value which has upto 3 words connected with hyphens for example 'abc-efg-xyz pqr'. The first and 
+                      third words in this 3 word string is the location therefore location should be like for example: 'xyz pqr-abc'
+                      2- date: to extract follow this: the value of Transaction Date, include both the date and time provided. the datetime value may not be
                       spaced correctly, so you must correct and formatting issues in the date value element. note that it contains the full year e.g: 2025 and is in this
                       order: month,date,year,time.
                       3- items: This is an array of item objects,each object must contain the following properties: itemname,unitprice,totalprice.
@@ -34,7 +34,7 @@ def text_to_json(textlist,modelname,modelkey):
                       If the itemname is followed by three float numbers assume this order:quantity,unitprice,totalprice. if itemname is followed by two flaot numbers assume: unitprice,totalprice. 
                       Extract the itemname,unitprice and totalprice only
                       
-                      your answer MUST be the json object ONLY with nothing else,nothing extra like comments before or after, just the JSON object itself"""
+                      your response MUST be the JSON object itself extracted from the input provided ONLY, with absolutely NOTHING ELSE,NOTHING extra like comments,NO reasoning etc before or after, just the JSON object itself"""
         }
       ],
       

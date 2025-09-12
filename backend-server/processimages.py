@@ -1,7 +1,7 @@
 # add logger and send actual error response to logger
 from paddle_ocr import image_to_text
 from llm_api import text_to_json
-from utilities import clean_float_string
+from utilities import clean_float_string,clean_json_string
 import json
 from dotenv import load_dotenv
 import os
@@ -36,6 +36,7 @@ def process_image(imagelist):
         print('\n\n')
         print('SUCCESS: TEXT TO JSON DONE')
         
+        
 
         dataobj = {}
         if 'error' in jsonresp:
@@ -50,7 +51,9 @@ def process_image(imagelist):
             dataobj = {"error":"Server Internal Processing Error"}
         else:
             
-            dataobj= json.loads(jsonresp['choices'][0]['message']['content'])
+            dataobj= clean_json_string(jsonresp['choices'][0]['message']['content'])
+            #test
+            print(dataobj)
             for item in dataobj['items']:
                 item['unitprice'] = float(clean_float_string(item['unitprice'])) 
                 item['totalprice'] = float(clean_float_string(item['totalprice']))
