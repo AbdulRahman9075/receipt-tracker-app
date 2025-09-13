@@ -36,6 +36,10 @@ This is a mobile application that allows you to scan shopping receipts using OCR
 
 8- Interactive analytics and charts for expenses
 
+## Demo
+
+https://github.com/user-attachments/assets/77d3e41c-26a0-497f-b120-471176e53128
+
 ## Gallery
 
 <img alt="homepage" src="https://github.com/user-attachments/assets/88af3a21-2de8-430f-ac96-eee67975441b" width=200>
