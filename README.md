@@ -38,28 +38,23 @@ This is a mobile application that allows you to scan shopping receipts using OCR
 
 ## Gallery
 
-<img alt="homepage" src="https://github.com/user-attachments/assets/16832bcf-c345-4373-8743-5c0bf6bf8757" width=200>
+<img alt="homepage" src="https://github.com/user-attachments/assets/88af3a21-2de8-430f-ac96-eee67975441b" width=200>
 
-<img alt="accountspage" src="https://github.com/user-attachments/assets/5425f9d4-7799-4cd8-9abc-115b4dec12c7" width=200>
+<img alt="accountspage" src="https://github.com/user-attachments/assets/43ed8b01-43c8-4beb-9cd8-84751d63535e" width=200>
 
-<img alt="recordspage" src="https://github.com/user-attachments/assets/eda404e5-3be1-4d29-9578-b212eec51f24" width=200>
+<img alt="recordspage" src="https://github.com/user-attachments/assets/70c07cf4-8c65-4299-bdb5-36880a7d8bd2" width=200>
 
-<img alt="createaccount" src="https://github.com/user-attachments/assets/635716e5-e602-4255-8ead-f0dcf2d6c9c0" width=200>
+<img alt="createaccount" src="https://github.com/user-attachments/assets/2780b714-40cc-4819-8832-4a9c0821ba05" width=200>
 
-<img alt="dataentryoptions" src="https://github.com/user-attachments/assets/925220f2-2c10-45c4-b841-851e82298e21" width=200>
+<img alt="dataentryoptions" src="https://github.com/user-attachments/assets/5b9fdc7a-81bc-40b0-a46e-d072f330cb8a" width=200>
 
 <img alt="renderpage" src="https://github.com/user-attachments/assets/a5cfad78-5f44-441b-aefa-4936c3f14cb0" width=200>
 
-<img alt="editimage" src="https://github.com/user-attachments/assets/d123ce65-415e-418b-9d64-f5d0ef394c9a" width=200>
-
 <img alt="addmanualentry" src="https://github.com/user-attachments/assets/f5b80e7e-aac5-45d1-8610-322168e64dfe" width=200>
 
-Search
+<img alt="unitpricegraph" src="https://github.com/user-attachments/assets/fd1e5a96-34a3-4673-8194-a53ab0913ddd" width=200 height=800>
 
-<img alt="search" src="https://github.com/user-attachments/assets/24a3ed2f-ebd5-4766-b428-a46ec21e6017" width=200>
-
-<img alt="unitpricegraph" src="https://github.com/user-attachments/assets/fd1e5a96-34a3-4673-8194-a53ab0913ddd" width=200>
-<img alt="consumptiongraph" src="https://github.com/user-attachments/assets/4093eab7-ebbd-4e10-8e24-6f7cd77cd748" width=200>
+<img alt="consumptiongraph" src="https://github.com/user-attachments/assets/4093eab7-ebbd-4e10-8e24-6f7cd77cd748" width=200 height=800>
 
 
 
